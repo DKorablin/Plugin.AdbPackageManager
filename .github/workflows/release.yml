@@ -1,7 +1,9 @@
 name: Test, Buid, Release
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  #workflow_dispatch:
 
 env:
   SolutionName: ${{github.event.repository.name}}
