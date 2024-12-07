@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: System.CLSCompliant(true)]
 
 #if NETCOREAPP
-[assembly: AssemblyMetadata("ProjectUrl", "https://dkorablin.ru/")]
+[assembly: AssemblyMetadata("ProjectUrl", "https://github.com/DKorablin/Plugin.AdbPackageManager")]
 #else
 
 [assembly: AssemblyTitle("Plugin.AdbPackageManager")]
