@@ -4,21 +4,21 @@ using SAL.Flatbed;
 
 namespace Plugin.AdbPackageManager.Plugins
 {
-	/// <summary>Логика взаимодействия с плагином просмотра APK файла</summary>
+	/// <summary>Logic for interacting with the APK file viewing plugin</summary>
 	internal class ApkImageViewPlugin
 	{
-		/// <summary>Плагин таймера</summary>
+		/// <summary>Plugin constants</summary>
 		private static class Constants
 		{
-			/// <summary>ID плагина с просмотра APK файла</summary>
+			/// <summary>ID of the APK file viewing plugin</summary>
 			public const String Name = "ca0bd89a-318f-4fa3-9a5e-49b3e1358a53";
 
-			/// <summary>Публичные методы плагина</summary>
+			/// <summary>Public plugin methods</summary>
 			public static class Methods
 			{
-				/// <summary>Открыть файл для просмотра</summary>
+				/// <summary>Open file for viewing</summary>
 				public const String OpenFile = "OpenFile";
-				/// <summary>Закрыть файл для просмотра</summary>
+				/// <summary>Close file</summary>
 				public const String CloseFile = "CloseFile";
 			}
 		}
@@ -39,14 +39,14 @@ namespace Plugin.AdbPackageManager.Plugins
 			}
 		}
 
-		/// <summary>Плагин загружен</summary>
+		/// <summary>Plugin loaded</summary>
 		public Boolean IsPluginLoaded => this.ApkViewPlugin != null;
 
 		public ApkImageViewPlugin(IHost host)
 			=> this._host = host;
 
-		/// <summary>Открыть APK файл для просмотра внутреннего содержимого</summary>
-		/// <param name="filePath">Путь к файлу</param>
+		/// <summary>Open APK file to view internal content</summary>
+		/// <param name="filePath">Path to file</param>
 		public void OpenApkFile(String filePath)
 		{
 			IPluginDescription plugin = this.ApkViewPlugin;
@@ -59,8 +59,8 @@ namespace Plugin.AdbPackageManager.Plugins
 			}
 		}
 
-		/// <summary>Закрыть открытый ранее APK файл</summary>
-		/// <param name="filePath">Путь к файлу</param>
+		/// <summary>Close previously opened APK file</summary>
+		/// <param name="filePath">Path to file</param>
 		public void CloseApkFile(String filePath)
 		{
 			IPluginDescription plugin = this.ApkViewPlugin;

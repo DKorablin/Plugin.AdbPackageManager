@@ -125,9 +125,9 @@ namespace Plugin.AdbPackageManager
 			set => this.SetField(ref this._hiddenPackages, value, nameof(this.HiddenPackages));
 		}
 
-		/// <summary>Получить ссылку на временный файл для сохранения APK файла с устройства</summary>
-		/// <param name="fileName">Наименование APK файла</param>
-		/// <returns>Ссылка для сохранения файла</returns>
+		/// <summary>Get a link to a temporary file for saving an APK file from the device</summary>
+		/// <param name="fileName">APK file name</param>
+		/// <returns>Link to save the file</returns>
 		public String GetApkTempPath(String fileName)
 		{
 			String path = Path.Combine(Path.GetTempPath(), PluginSettings.AdbPackageManagerTempPath);
@@ -173,9 +173,9 @@ namespace Plugin.AdbPackageManager
 			}
 		}
 
-		/// <summary>Получить список файлов во временной директории и стереть директорию</summary>
-		/// <param name="isDeleteDirectory">Необходимо стереть директорию после чистки</param>
-		/// <returns>Список файлов во временной папке</returns>
+		/// <summary>Get a list of files in the temporary directory and delete the directory</summary>
+		/// <param name="isDeleteDirectory">The directory must be deleted after cleaning</param>
+		/// <returns>List of files in the temporary folder</returns>
 		public IEnumerable<String> GetApkTempFiles(Boolean isDeleteDirectory = true)
 		{
 			if(!this._isTempFolderCreated)

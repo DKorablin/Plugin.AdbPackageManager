@@ -130,7 +130,7 @@
 			this.tsbnDeviceInstall.Name = "tsbnDeviceInstall";
 			this.tsbnDeviceInstall.Size = new System.Drawing.Size(23, 22);
 			this.tsbnDeviceInstall.Text = "Install";
-			this.tsbnDeviceInstall.ToolTipText = "Install Andoid Package";
+			this.tsbnDeviceInstall.ToolTipText = "Install Android Package";
 			this.tsbnDeviceInstall.Click += new System.EventHandler(this.tsbnDeviceInstall_Click);
 			// 
 			// lvInstalled
@@ -259,9 +259,9 @@
 			this.gridSearch.DataGrid = null;
 			this.gridSearch.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.gridSearch.EnableFindCase = true;
-			this.gridSearch.EnableFindHilight = true;
+			this.gridSearch.EnableFindHighlight = true;
 			this.gridSearch.EnableFindPrevNext = true;
-			this.gridSearch.EnableSearchHilight = false;
+			this.gridSearch.EnableSearchHighlight = false;
 			this.gridSearch.ListView = null;
 			this.gridSearch.Location = new System.Drawing.Point(3, 155);
 			this.gridSearch.Name = "gridSearch";

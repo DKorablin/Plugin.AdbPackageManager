@@ -15,10 +15,10 @@ namespace Plugin.AdbPackageManager
 		internal IHostWindows HostWindows { get; }
 		internal static TraceSource Trace => PluginWindows._trace ?? (PluginWindows._trace = PluginWindows.CreateTraceSource<PluginWindows>());
 
-		/// <summary>Настройки для взаимодействия из хоста</summary>
+		/// <summary>Settings for interaction from the host</summary>
 		Object IPluginSettings.Settings => this.Settings;
 
-		/// <summary>Настройки для взаимодействия из плагина</summary>
+		/// <summary>Settings for interaction from the plugin</summary>
 		public PluginSettings Settings
 		{
 			get

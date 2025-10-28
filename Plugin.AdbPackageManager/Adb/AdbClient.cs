@@ -32,11 +32,11 @@ namespace Plugin.AdbPackageManager.Adb
 			{
 				PluginWindows.Trace.TraceEvent(TraceEventType.Verbose, 2, "ADB server not running. Starting executable {0}", adbPath);
 				this.StartServer(adbPath);
-				this.Initialize();//Бросаем исключение наверх
+				this.Initialize();
 			}
 		}
 
-		/// <summary>Попытка получить серзию запущеннгог сервера</summary>
+		/// <summary>Attempting to get the running server's serial number</summary>
 		private void Initialize()
 		{
 			Int32 serverVersion = this.GetServerVersion();
@@ -128,7 +128,7 @@ namespace Plugin.AdbPackageManager.Adb
 		public void SetDevice(String serialNumber)
 			=> this.DeviceSerialNumber = serialNumber;
 
-		/// <summary>Получить информацию о устройстве</summary>
+		/// <summary>Get information about the device</summary>
 		/// <returns></returns>
 		public Dictionary<String, String> GetDeviceProperties()
 		{
@@ -149,8 +149,8 @@ namespace Plugin.AdbPackageManager.Adb
 			return props;
 		}
 
-		/// <summary>Выполнить команду на удалённом устройстве</summary>
-		/// <param name="command">Команда для выполнения</param>
+		/// <summary>Execute a command on a remote device</summary>
+		/// <param name="command">Command to execute</param>
 		/// <returns></returns>
 		public String[] ExecuteRemoteCommand(String command)
 		{
@@ -167,9 +167,9 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
-		/// <summary>Получить информацию о файле</summary>
-		/// <param name="fileName">Путь к файлу</param>
-		/// <returns>Информация о файле</returns>
+		/// <summary>Get file information</summary>
+		/// <param name="fileName">File path</param>
+		/// <returns>File information</returns>
 		public AdbFileInfo GetFileInfo(String fileName)
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
@@ -186,9 +186,9 @@ namespace Plugin.AdbPackageManager.Adb
 		public IEnumerable<AdbFileInfo> GetDirectoryListing()
 			=> throw new NotImplementedException();
 
-		/// <summary>Получить список файлов на удалённом устройстве</summary>
-		/// <param name="directoryName">Корневая директория</param>
-		/// <returns>Файлы и папки</returns>
+		/// <summary>Get a list of files on a remote device</summary>
+		/// <param name="directoryName">Root directory</param>
+		/// <returns>Files and folders</returns>
 		public IEnumerable<AdbFileInfo> GetDirectoryListing(String directoryName)
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
@@ -237,9 +237,9 @@ namespace Plugin.AdbPackageManager.Adb
 			return new AdbFileInfo(fullName, name, size, mode, time);
 		}
 
-		/// <summary>Загрузить файл с удалённого устройства</summary>
-		/// <param name="remoteFileName">Удалённый путь к файлу</param>
-		/// <param name="localFileName">Локальный путь к файлу</param>
+		/// <summary>Download a file from a remote device</summary>
+		/// <param name="remoteFileName">Remote file path</param>
+		/// <param name="localFileName">Local file path</param>
 		public void DownloadFile(String remoteFileName, String localFileName)
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
@@ -269,10 +269,10 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
-		/// <summary>Загрузить файл на устройство</summary>
-		/// <param name="localFilePath">Локальный путь к файлу</param>
-		/// <param name="remoteFilePath">Удалённый путь куда загружаем файл</param>
-		/// <param name="remoteFilePermissions">Разрешения для создаваемого файла по умочанию</param>
+		/// <summary>Upload file to device</summary>
+		/// <param name="localFilePath">Local path to file</param>
+		/// <param name="remoteFilePath">Remote path to upload file</param>
+		/// <param name="remoteFilePermissions">Default permissions for the created file</param>
 		public void UploadFile(String localFilePath, String remoteFilePath, Int32 remoteFilePermissions = 0x0666)
 		{
 			AdbFileInfo adbFileInfo = this.GetFileInfo(remoteFilePath);
@@ -326,15 +326,15 @@ namespace Plugin.AdbPackageManager.Adb
 			return response;
 		}
 
-		/// <summary>Удалить существующий файл с файловой системы</summary>
-		/// <param name="remoteFileName">Удалённый путь к файлу</param>
+		/// <summary>Delete an existing file from the file system</summary>
+		/// <param name="remoteFileName">Remote file path</param>
 		public void DeleteFile(String remoteFileName)
 			=> ExecuteRemoteCommand(String.Format("rm -f \"{0}\"", remoteFileName));
 
-		/// <summary>Установка приложения с файловой системы</summary>
-		/// <param name="localFilePath">Локальный путь к файлу</param>
-		/// <param name="installOnSdCard">Установить на внешнее хранилище</param>
-		/// <param name="reinstallExisting">Переустановка существующего пакета с сохранением данных</param>
+		/// <summary>Installing an application from the file system</summary>
+		/// <param name="localFilePath">Local file path</param>
+		/// <param name="installOnSdCard">Install on external storage</param>
+		/// <param name="reinstallExisting">Reinstalling an existing package while preserving data</param>
 		public void InstallApplication(String localFilePath, String tempFolderPath, Boolean installOnSdCard, Boolean reinstallExisting)
 		{
 			// legacy install
@@ -343,7 +343,7 @@ namespace Plugin.AdbPackageManager.Adb
 			String remoteFileName = tempFolderPath + baseName;
 
 			if(this.GetFileInfo(remoteFileName).IsFile)
-				this.DeleteFile(remoteFileName);//Удаляем существующий файл
+				this.DeleteFile(remoteFileName);
 
 			this.UploadFile(localFilePath, remoteFileName);
 
@@ -389,8 +389,8 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
-		/// <summary>Установить Android Package на устройство, в качестве аргумента передаётся путь к локальному файлу</summary>
-		/// <param name="reinstallExisting">Обновить/переустановить ранее установленное приложение (Оставить данные)</param>
+		/// <summary>Install an Android Package on the device, passing the path to a local file as an argument.</summary>
+		/// <param name="reinstallExisting">Update/reinstall a previously installed application (Keep data)</param>
 		public void InstallAndroidPackage(String apkPath, Boolean reinstallExisting = true)
 		{
 			if(!File.Exists(apkPath))
@@ -429,9 +429,9 @@ namespace Plugin.AdbPackageManager.Adb
 			//this.ExecutePm(String.Format("install {0} \"{1}\"", options, apkPath));
 		}
 
-		/// <summary>Удаление ранее установленного приложения</summary>
-		/// <param name="applicationName">Наименование установленного приложения</param>
-		/// <param name="keepDataAndCache">Оставить данные приложения</param>
+		/// <summary>Remove a previously installed application</summary>
+		/// <param name="applicationName">Name of the installed application</param>
+		/// <param name="keepDataAndCache">Keep application data</param>
 		public void UninstallApplication(String applicationName, Boolean keepDataAndCache = false)
 		{
 			// legacy uninstall
@@ -440,8 +440,8 @@ namespace Plugin.AdbPackageManager.Adb
 			this.ExecutePm(String.Format("uninstall {0} {1}", options, applicationName));
 		}
 
-		/// <summary>Получть список всех установленных приложения</summary>
-		/// <returns>Список установленных приложений</returns>
+		/// <summary>Get a list of all installed applications</summary>
+		/// <returns>List of installed applications</returns>
 		public IEnumerable<AdbAppInfo> GetApplications()
 		{
 			String[] response = this.ExecuteRemoteCommand("pm list packages -f");

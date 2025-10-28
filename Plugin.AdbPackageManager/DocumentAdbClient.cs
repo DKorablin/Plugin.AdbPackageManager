@@ -34,7 +34,7 @@ namespace Plugin.AdbPackageManager
 
 		public DocumentAdbClient()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 			splitMain.Panel2Collapsed = true;
 			gridSearch.ListView = lvInstalled;
 		}
@@ -44,10 +44,10 @@ namespace Plugin.AdbPackageManager
 			this.Window.Caption = DocumentAdbClient.Caption;
 			this.Window.SetTabPicture(Resources.Icon);
 
-			// Обновить кнопки при изменении настроек
+			// Update buttons when settings change
 			this.Settings_PropertyChanged(this, new PropertyChangedEventArgs(nameof(PluginSettings.AdbPath)));
-			this.Plugin.Settings.PropertyChanged += Settings_PropertyChanged;
-			this.Window.Closed += new EventHandler(Window_Closed);
+			this.Plugin.Settings.PropertyChanged += this.Settings_PropertyChanged;
+			this.Window.Closed += new EventHandler(this.Window_Closed);
 
 			foreach(AdbAppInfo.AdbAppType type in Enum.GetValues(typeof(AdbAppInfo.AdbAppType)))
 				lvInstalled.Groups.Add(type.ToString(), type.ToString());
@@ -76,14 +76,14 @@ namespace Plugin.AdbPackageManager
 
 		private void Window_Closed(Object sender, EventArgs e)
 		{
-			this.Plugin.Settings.PropertyChanged -= Settings_PropertyChanged;
+			this.Plugin.Settings.PropertyChanged -= this.Settings_PropertyChanged;
 
 			if(this._apkViewPlugin != null && this._apkViewPlugin.IsPluginLoaded)
 				foreach(String filePath in this.Plugin.Settings.GetApkTempFiles(true))
 					this.ApkViewPlugin.CloseApkFile(filePath);
 		}
 
-		/// <summary>Удалить все данные после смены устройства</summary>
+		/// <summary>Delete all data after changing the device</summary>
 		private void ClearDeviceData()
 		{
 			this.Window.Caption = DocumentAdbClient.Caption;
@@ -92,13 +92,13 @@ namespace Plugin.AdbPackageManager
 			this.RemoveSubPanelCtrl();
 		}
 
-		private void ShowConfirmCtrl(String packageName, String packagePath, String[] resoureFiles)
+		private void ShowConfirmCtrl(String packageName, String packagePath, String[] resourceFiles)
 		{
-			InstallConfirmCtrl ctrl = CreateSubPanelCtrl<InstallConfirmCtrl>(out Boolean isCtrlCreated);
+			InstallConfirmCtrl ctrl = this.CreateSubPanelCtrl<InstallConfirmCtrl>(out Boolean isCtrlCreated);
 			if(isCtrlCreated)
-				ctrl.OnConfirm += Ctrl_OnConfirm;
+				ctrl.OnConfirm += this.Ctrl_OnConfirm;
 
-			ctrl.ShowConfirm(packageName, packagePath, resoureFiles);
+			ctrl.ShowConfirm(packageName, packagePath, resourceFiles);
 		}
 
 		private T CreateSubPanelCtrl<T>(out Boolean ctrlCreated) where T : Control, new()
@@ -160,7 +160,7 @@ namespace Plugin.AdbPackageManager
 			}
 
 			if(packageName == null && !ignoreWarnings && MessageBox.Show("Can't determine valid apk file. Do you want to continue installing this package?", "Android package installer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-				return null;//Если пользователь всё равно хочет продолжить установку, то это его проблемы...
+				return null;//If the user still wants to continue the installation, then that's their problem...
 
 			if(packageName != null)
 			{
@@ -185,8 +185,8 @@ namespace Plugin.AdbPackageManager
 			return new WorkerInstallItem.PackageInstallItem(packageName, filePath, expansionFiles);
 		}
 
-		/// <summary>Получить список выбранных приложений в списке</summary>
-		/// <returns>Выбранное приложение в списке</returns>
+		/// <summary>Get a list of selected applications in the list</summary>
+		/// <returns>The selected application in the list</returns>
 		private IEnumerable<AdbAppInfo> GetSelectedApplications()
 		{
 			foreach(ListViewItem item in lvInstalled.SelectedItems)
@@ -234,7 +234,7 @@ namespace Plugin.AdbPackageManager
 			{
 				Dictionary<String, String> properties = this.Client.GetDeviceProperties();
 
-				DevicePropertiesCtrl ctrl = CreateSubPanelCtrl<DevicePropertiesCtrl>(out Boolean isCreated);
+				DevicePropertiesCtrl ctrl = this.CreateSubPanelCtrl<DevicePropertiesCtrl>(out Boolean _);
 				ctrl.ShowProperties(properties);
 			} finally
 			{
@@ -290,7 +290,7 @@ namespace Plugin.AdbPackageManager
 					if(tabMain.SelectedTab == tabPackages)
 					{
 						List<ListViewItem> itemsToAdd = new List<ListViewItem>();
-						String[] subItems = Array.ConvertAll<String, String>(new String[lvShell.Columns.Count + 1], (str) => { return String.Empty; });
+						String[] subItems = Array.ConvertAll(new String[lvShell.Columns.Count + 1], str => String.Empty);
 						foreach(AdbAppInfo application in this.Client.GetApplications())
 						{
 							ListViewItem item = new ListViewItem(subItems)
@@ -305,7 +305,7 @@ namespace Plugin.AdbPackageManager
 							Boolean isHidden = false;
 							if(application.Type == AdbAppInfo.AdbAppType.System || application.Type == AdbAppInfo.AdbAppType.Privileged)
 								isHidden = true;
-							else if(this.Plugin.Settings.HiddenPackages != null && Array.Exists(this.Plugin.Settings.HiddenPackages, (str) => { return str == application.Name; }))
+							else if(this.Plugin.Settings.HiddenPackages != null && Array.Exists(this.Plugin.Settings.HiddenPackages, str => str == application.Name))
 								isHidden = true;
 
 							if(isHidden)
@@ -325,7 +325,7 @@ namespace Plugin.AdbPackageManager
 					} else if(tabMain.SelectedTab == tabShell)
 					{
 						List<ListViewItem> itemsToAdd = new List<ListViewItem>();
-						String[] subItems = Array.ConvertAll<String, String>(new String[lvShell.Columns.Count + 1], (str) => { return String.Empty; });
+						String[] subItems = Array.ConvertAll<String, String>(new String[lvShell.Columns.Count + 1], str => String.Empty);
 						foreach(AdbFileInfo file in this.Client.GetDirectoryListing(String.Empty))
 						{
 							ListViewItem item = new ListViewItem(subItems)
@@ -378,7 +378,7 @@ namespace Plugin.AdbPackageManager
 
 			if(e.ClickedItem == tsmiInstalledUninstall)
 			{
-				if(MessageBox.Show("Are you shure you want to uninstall selected applition(s)?", "Uninstall", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+				if(MessageBox.Show("Are you sure you want to uninstall selected application(s)?", "Uninstall", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 					this.StartProcess<WorkerUninstallItem>(new WorkerUninstallItem(this.GetSelectedApplications()));
 			} else if(e.ClickedItem == tsmiInstalledDownload)
 			{

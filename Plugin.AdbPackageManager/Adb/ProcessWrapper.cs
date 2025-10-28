@@ -7,8 +7,8 @@ namespace Plugin.AdbPackageManager.Adb
 	{
 		private readonly String _path;
 
-		public event EventHandler<DataReceivedEventArgs> DataRecieved;
-		public event EventHandler<DataReceivedEventArgs> ErrorRecieved;
+		public event EventHandler<DataReceivedEventArgs> DataReceived;
+		public event EventHandler<DataReceivedEventArgs> ErrorReceived;
 
 		public ProcessWrapper(String path)
 		{
@@ -31,10 +31,10 @@ namespace Plugin.AdbPackageManager.Adb
 					Arguments = arguments,
 				}
 			};
-			if(this.DataRecieved != null)
-				process.OutputDataReceived += Process_OutputDataReceived;
-			if(this.ErrorRecieved != null)
-				process.ErrorDataReceived += Process_ErrorDataReceived;
+			if(this.DataReceived != null)
+				process.OutputDataReceived += this.Process_OutputDataReceived;
+			if(this.ErrorReceived != null)
+				process.ErrorDataReceived += this.Process_ErrorDataReceived;
 
 			process.Start();
 			return process;
@@ -43,13 +43,13 @@ namespace Plugin.AdbPackageManager.Adb
 		private void Process_OutputDataReceived(Object sender, DataReceivedEventArgs e)
 		{
 			if(e.Data != null)
-				this.DataRecieved(this, e);
+				this.DataReceived(this, e);
 		}
 
 		private void Process_ErrorDataReceived(Object sender, DataReceivedEventArgs e)
 		{
 			if(e.Data != null)
-				this.ErrorRecieved(this, e);
+				this.ErrorReceived(this, e);
 		}
 	}
 }

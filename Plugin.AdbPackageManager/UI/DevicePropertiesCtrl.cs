@@ -7,7 +7,7 @@ namespace Plugin.AdbPackageManager.UI
 	internal partial class DevicePropertiesCtrl : UserControl
 	{
 		public DevicePropertiesCtrl()
-			=> InitializeComponent();
+			=> this.InitializeComponent();
 
 		public void ShowProperties(Dictionary<String,String> properties)
 		{

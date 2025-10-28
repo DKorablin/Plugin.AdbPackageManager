@@ -13,7 +13,7 @@ namespace Plugin.AdbPackageManager.UI
 			Failed = 2,
 		}
 
-		private static Color[] StatusMessageColor = new Color[] { Color.LightCyan, Color.AntiqueWhite, Color.Pink, };
+		private static readonly Color[] StatusMessageColor = new Color[] { Color.LightCyan, Color.AntiqueWhite, Color.Pink, };
 
 		public MessageCtrl()
 		{
