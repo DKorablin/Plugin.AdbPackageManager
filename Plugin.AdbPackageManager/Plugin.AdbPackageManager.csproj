@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net35;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 		<OutputType>Library</OutputType>
 		<RootNamespace>Plugin.AdbPackageManager</RootNamespace>
@@ -31,7 +31,9 @@
 	  <Compile Include="..\WinForms.Shared\SearchGrid\SearchGrid.Designer.cs" Link="UI\Controls\SearchGrid.Designer.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Include="..\WinForms.Shared\SearchGrid\SearchGrid.resx" Link="UI\Controls\SearchGrid.resx" />
+		<EmbeddedResource Include="..\WinForms.Shared\SearchGrid\SearchGrid.resx" Link="UI\SearchGrid.resx">
+			<LogicalName>AlphaOmega.Windows.Forms.SearchGrid.resources</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,7 +63,7 @@
 		</PackageReference>
 		<PackageReference Include="AlphaOmega.ApkReader" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<Reference Include="System.Design" />
 	</ItemGroup>
 	<ItemGroup>
