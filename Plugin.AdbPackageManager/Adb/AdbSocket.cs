@@ -11,7 +11,7 @@ namespace Plugin.AdbPackageManager.Adb
 		private TcpClient _tcpClient;
 		private NetworkStream _tcpStream;
 
-		private Encoding _encoding = Encoding.ASCII;
+		private readonly Encoding _encoding = Encoding.ASCII;
 
 		public AdbSocket(String adbHost, Int32 adbPort)
 		{
@@ -21,20 +21,24 @@ namespace Plugin.AdbPackageManager.Adb
 
 		public void Dispose()
 		{
-			if(this._tcpClient != null)
-			{
-				this._tcpClient.Close();
-				this._tcpClient = null;
-			}
-
-			if(this._tcpStream != null)
-			{
-				this._tcpStream.Close();
-				this._tcpStream = null;
-			}
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		public void Write(Byte[] data, Int32 size)//Plugin.Trace.TraceEvent(TraceEventType.Verbose, 1, "Sending {0} bytes", size);
+		protected virtual void Dispose(Boolean disposing)
+		{
+			this._tcpClient?.Close();
+			this._tcpClient = null;
+
+			this._tcpStream?.Close();
+			this._tcpStream = null;
+		}
+
+		/// <summary>Destructor to close native handle</summary>
+		~AdbSocket()
+			=> this.Dispose(false);
+
+		public void Write(Byte[] data, Int32 size)
 			=> this._tcpStream.Write(data, 0, size);
 
 		public void Write(Byte[] data)

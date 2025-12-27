@@ -5,4 +5,3 @@ using System.Runtime.InteropServices;
 [assembly: System.CLSCompliant(true)]
 
 [assembly: AssemblyDescription("UI for command tool adb.exe")]
-[assembly: AssemblyCopyright("Copyright © Danila Korablin 2020-2025")]

@@ -195,7 +195,6 @@ namespace Plugin.AdbPackageManager
 
 		private void Ctrl_OnConfirm(Object sender, InstallConfirmCtrl.InstallConfirmEventArgs e)
 		{
-			//this.StartProcess<WorkerInstallItem>(new WorkerInstallItem(packageName, filePath, expansionFiles));
 			this.RemoveSubPanelCtrl();
 			if(e.IsConfirm)
 				this.StartProcess<WorkerInstallItem>(new WorkerInstallItem(e.Package));
@@ -284,7 +283,7 @@ namespace Plugin.AdbPackageManager
 					this.ClearDeviceData();
 				else
 				{
-					this.Window.Caption = String.Join(" - ", new String[] { device.ToString(), DocumentAdbClient.Caption, });
+					this.Window.Caption = String.Join(" - ", device.ToString(), DocumentAdbClient.Caption);
 					this.Client.SetDevice(device.SerialNumber);
 					tsbnDeviceProperties.Enabled = tsbnDeviceInstall.Enabled = true;
 					if(tabMain.SelectedTab == tabPackages)
@@ -326,7 +325,7 @@ namespace Plugin.AdbPackageManager
 					{
 						List<ListViewItem> itemsToAdd = new List<ListViewItem>();
 						String[] subItems = Array.ConvertAll<String, String>(new String[lvShell.Columns.Count + 1], str => String.Empty);
-						foreach(AdbFileInfo file in this.Client.GetDirectoryListing(String.Empty))
+						foreach(AdbFileInfo file in this.Client.GetDirectoryListing())
 						{
 							ListViewItem item = new ListViewItem(subItems)
 							{
@@ -450,20 +449,20 @@ namespace Plugin.AdbPackageManager
 			{
 				foreach(AdbAppInfo package in uninstall.PackageNames)
 				{
-					bwProcess.ReportProgress(1, String.Format("Uninstalling {0}", package.Name));
+					bwProcess.ReportProgress(1, $"Uninstalling {package.Name}");
 					this.Client.UninstallApplication(package.Name);
 				}
 			}else if(e.Argument is WorkerInstallItem install)
 			{
 				foreach(var package in install.Packages)
 				{
-					bwProcess.ReportProgress(1, String.Format("Installing {0}", package.PackageName));
+					bwProcess.ReportProgress(1, $"Installing {package.PackageName}");
 					this.Client.InstallAndroidPackage(package.FilePath, this.Plugin.Settings.ReinstallExisting);
 
 					foreach(String file in package.Resources)
 					{
-						String remoteFilePath = this.Plugin.Settings.AndroidObbPath + package.PackageName + "/" + Path.GetFileName(file);
-						bwProcess.ReportProgress(2, String.Format("Uploading {0}", remoteFilePath));
+						String remoteFilePath = Path.Combine(this.Plugin.Settings.AndroidObbPath + package.PackageName, Path.GetFileName(file));
+						bwProcess.ReportProgress(2, $"Uploading {remoteFilePath}");
 						this.Client.UploadFile2(file, remoteFilePath);
 					}
 				}
@@ -472,7 +471,7 @@ namespace Plugin.AdbPackageManager
 			{
 				foreach(AdbAppInfo package in download.Applications)
 				{
-					bwProcess.ReportProgress(1, String.Format("Downloading {0}", package.Name));
+					bwProcess.ReportProgress(1, $"Downloading {package.Name}");
 					if(download.Applications.Length == 1)
 						this.Client.DownloadFile(package.FilePath, download.FilePath);
 					else
@@ -482,7 +481,7 @@ namespace Plugin.AdbPackageManager
 			{
 				foreach(AdbAppInfo package in apkView.Applications)
 				{
-					bwProcess.ReportProgress(1, String.Format("Downloading {0}", package.Name));
+					bwProcess.ReportProgress(1, $"Downloading {package.Name}");
 					String tempFilePath = this.Plugin.Settings.GetApkTempPath(package.FileName);
 					this.Client.DownloadFile(package.FilePath, tempFilePath);
 					apkView.TempPath.Add(tempFilePath);

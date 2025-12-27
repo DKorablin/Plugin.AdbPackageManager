@@ -183,13 +183,10 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
-		public IEnumerable<AdbFileInfo> GetDirectoryListing()
-			=> throw new NotImplementedException();
-
 		/// <summary>Get a list of files on a remote device</summary>
 		/// <param name="directoryName">Root directory</param>
 		/// <returns>Files and folders</returns>
-		public IEnumerable<AdbFileInfo> GetDirectoryListing(String directoryName)
+		public IEnumerable<AdbFileInfo> GetDirectoryListing(String directoryName = "")
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
 			{
@@ -385,7 +382,7 @@ namespace Plugin.AdbPackageManager.Adb
 			if(!String.IsNullOrEmpty(errorMessage))
 			{
 				PluginWindows.Trace.TraceEvent(TraceEventType.Verbose, 1, "AdbResponse (error): {0}", errorMessage);
-				throw new Exception(errorMessage);
+				throw new InvalidOperationException(errorMessage);
 			}
 		}
 
@@ -423,7 +420,7 @@ namespace Plugin.AdbPackageManager.Adb
 				case 0://Success\r\n
 					return;
 				default:
-					throw new ApplicationException(errorMessage);
+					throw new InvalidOperationException(errorMessage);
 				}
 			}
 			//this.ExecutePm(String.Format("install {0} \"{1}\"", options, apkPath));
@@ -465,14 +462,14 @@ namespace Plugin.AdbPackageManager.Adb
 			String[] response = this.ExecuteRemoteCommand(String.Format("pm {0}", commandLine));
 
 			if(response == null || response.Length == 0)
-				throw new Exception("Wrong pm output");
+				throw new InvalidOperationException("Wrong pm output");
 
 			String line = response[response.Length - 1];
 			if(line.Equals("Success"))
 				return;
 
 			Match match = Regex.Match(line, @"\[(.+?)]");
-			throw new Exception(2 == match.Groups.Count ? match.Groups[1].Value : line);
+			throw new InvalidOperationException(2 == match.Groups.Count ? match.Groups[1].Value : line);
 		}
 
 		private void SetDevice(AdbSocket adbSocket)
