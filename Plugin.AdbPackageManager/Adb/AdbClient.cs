@@ -172,14 +172,13 @@ namespace Plugin.AdbPackageManager.Adb
 		/// <returns>File information</returns>
 		public AdbFileInfo GetFileInfo(String fileName)
 		{
-			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
+			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost, this.AdbPort))
 			{
 				String response = this.SendSyncCommand(adbSocket, "STAT", "\"" + fileName + "\"");
 
-				if(response != "STAT")
-					throw new InvalidOperationException(response);
-
-				return this.GetFileInfo(adbSocket, fileName, null);
+				return response == "STAT"
+					? GetFileInfo(adbSocket, fileName, null)
+					: throw new InvalidOperationException(response);
 			}
 		}
 
@@ -204,7 +203,7 @@ namespace Plugin.AdbPackageManager.Adb
 					} else if(response != "DENT")
 						throw new InvalidOperationException(response);
 
-					AdbFileInfo adbFileInfo = this.GetFileInfo(adbSocket, null, directoryName);
+					AdbFileInfo adbFileInfo = GetFileInfo(adbSocket, null, directoryName);
 					if(adbFileInfo == null)
 						realDirectory = true; // has "." and ".."
 					else
@@ -215,7 +214,7 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
-		private AdbFileInfo GetFileInfo(AdbSocket adbSocket, String fullName, String directoryName)
+		private static AdbFileInfo GetFileInfo(AdbSocket adbSocket, String fullName, String directoryName)
 		{
 			Int32 mode = adbSocket.ReadInt32();
 			Int32 size = adbSocket.ReadInt32();
@@ -344,18 +343,12 @@ namespace Plugin.AdbPackageManager.Adb
 
 			this.UploadFile(localFilePath, remoteFileName);
 
-			try
+			String[] options = new String[]
 			{
-				String[] options = new String[]
-				{
 					installOnSdCard?"-s":String.Empty,
 					reinstallExisting?"-r":String.Empty,
-				};
-				this.ExecutePm(String.Format("install {0} {1}", String.Join(" ", options), remoteFileName));
-			} finally
-			{
-				//this.DeleteFile(remoteFileName);
-			}
+			};
+			this.ExecutePm(String.Format("install {0} {1}", String.Join(" ", options), remoteFileName));
 		}
 
 		public void UploadFile2(String localPath, String remotePath)
@@ -366,7 +359,6 @@ namespace Plugin.AdbPackageManager.Adb
 			PluginWindows.Trace.TraceEvent(TraceEventType.Verbose, 1, "AdbRequest {0}", arguments);
 
 			ProcessWrapper processWrapper = new ProcessWrapper(this.AdbPath);
-			Int32 exitCode = 0;
 			String resultMessage;
 			String errorMessage;
 			using(Process process = processWrapper.Invoke(arguments))
@@ -374,7 +366,6 @@ namespace Plugin.AdbPackageManager.Adb
 				process.WaitForExit();
 				resultMessage = process.StandardOutput.ReadToEnd();
 				errorMessage = process.StandardError.ReadToEnd();
-				exitCode = process.ExitCode;
 			}
 
 			if(!String.IsNullOrEmpty(resultMessage))
