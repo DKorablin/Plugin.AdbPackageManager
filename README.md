@@ -10,13 +10,13 @@ UI plugin for working with Android Debug Bridge (ADB) with extended package mana
 - View APK internal structure (resources, manifest, certificates)
 - Extract / export APKs from device
 - Open / close APK in dedicated viewer plugin
-- Multi-target build: .NET Framework 3.5 and .NET 8
+- Multi-target build: .NET Framework 4.8 and .NET 8
 - Designed as SAL.Flatbed plugin
 
 ## Requirements
 
 - Android SDK Platform Tools (adb available in PATH)
-- .NET Framework 3.5 (legacy target) or .NET 8 (modern target)
+- .NET Framework 4.8 (legacy target) or .NET 8 (modern target)
 - Windows OS (for net8.0-windows target)
 
 ## Installation
