@@ -63,8 +63,12 @@
 		</PackageReference>
 		<PackageReference Include="AlphaOmega.ApkReader" />
 	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<PackageReference Include="System.Text.Encoding.CodePages" />
+	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
 		<Reference Include="System.Design" />
+		<Reference Include="System.Net.Http" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="UI\Controls\" />

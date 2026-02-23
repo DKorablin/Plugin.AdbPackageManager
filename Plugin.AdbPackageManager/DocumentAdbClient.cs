@@ -217,7 +217,7 @@ namespace Plugin.AdbPackageManager
 					this.Plugin.Settings.AdbPath = this.Plugin.Settings.DownloadAdbClient();
 					return;
 				} catch(Exception exc)
-				{//TODO: exc.IsFatal
+				{
 					PluginWindows.Trace.TraceData(TraceEventType.Error, 6, exc);
 				}
 
