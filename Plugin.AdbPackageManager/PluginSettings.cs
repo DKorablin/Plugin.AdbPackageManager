@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Windows.Forms.Design;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
@@ -156,12 +158,23 @@ namespace Plugin.AdbPackageManager
 			} else
 				Directory.CreateDirectory(destination);
 
-			String zipPath = this.GetApkTempPath("platform-tools-latest-windows.zip");
-			using(WebClient client = new WebClient())
-				client.DownloadFile(new Uri("https://dl.google.com/android/repository/platform-tools-latest-windows.zip"), zipPath);
+			using(HttpClient client = new HttpClient())
+			{
+				using(HttpResponseMessage response = client.GetAsync(new Uri("https://dl.google.com/android/repository/platform-tools-latest-windows.zip")).Result)
+				{
+					if(!response.IsSuccessStatusCode)
+						throw new InvalidOperationException($"Failed to download: {response.StatusCode}");
 
-			FastZip zip = new FastZip();
-			zip.ExtractZip(zipPath, destination, FastZip.Overwrite.Always, null, null, null, true);
+					using(System.IO.Stream contentStream = response.Content.ReadAsStreamAsync().Result)
+					{
+#if !NETFRAMEWORK
+						Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+						FastZip zip = new FastZip();
+						zip.ExtractZip(contentStream, destination, FastZip.Overwrite.Always, null, null, null, true, true);
+					}
+				}
+			}
 
 			String[] foundFiles1 = Directory.GetFiles(destination, "adb.exe", SearchOption.AllDirectories);
 			if(foundFiles1.Length == 1)

@@ -1,7 +1,12 @@
 # Android Debug Bridge Package Manager
 [![Auto build](https://github.com/DKorablin/Plugin.AdbPackageManager/actions/workflows/release.yml/badge.svg)](https://github.com/DKorablin/Plugin.AdbPackageManager/actions)
 
+[![UI Screenshot](.github/assets/UI-1-200.png)](.github/assets/UI-1.png)
+[![UI Screenshot](.github/assets/UI-2-200.png)](.github/assets/UI-2.png)
+
 UI plugin for working with Android Debug Bridge (ADB) with extended package management and inspection features.
+The main reason to create this plugin was to upload APK files to the Oculus Quest 2 device without using the command line.
+The plugin also provides additional features such as viewing the internal structure of APK files and extracting them from the device.
 
 ## Key Features
 
@@ -15,7 +20,7 @@ UI plugin for working with Android Debug Bridge (ADB) with extended package mana
 
 ## Requirements
 
-- Android SDK Platform Tools (adb available in PATH)
+- Android SDK Platform Tools (adb available in PATH or will be downloaded to local folder)
 - .NET Framework 4.8 (legacy target) or .NET 8 (modern target)
 - Windows OS (for net8.0-windows target)
 
@@ -26,8 +31,8 @@ UI plugin for working with Android Debug Bridge (ADB) with extended package mana
 	- [Flatbed.Dialog](https://dkorablin.github.io/Flatbed-Dialog/)
 	- [Flatbed.Dialog (Lite)](https://dkorablin.github.io/Flatbed-Dialog-Lite)
 	- [Flatbed.MDI](https://dkorablin.github.io/Flatbed-MDI)
-	- [Flatbed.MDI (Avalon)](https://dkorablin.github.io/Flatbed-MDI-Avalon)
-3. Restart the host application; Plugin.AdbPackageManager should appear in the plugin list.
+	- [Flatbed.MDI (WPF)](https://dkorablin.github.io/Flatbed-MDI-Avalon)
+3. Restart the host application; Plugin.AdbPackageManager should appear in the plugin list (Tools -> ADB Client).
 
 ## Usage
 
@@ -35,7 +40,7 @@ UI plugin for working with Android Debug Bridge (ADB) with extended package mana
 2. Load the plugin inside the host application.
 3. Use the UI to:
 	- Refresh package list
-	- Install / uninstall APK files
+	- Install / uninstall APK files (Resource files will be uploaded to the device automatically)
 	- Open an APK to inspect its contents (delegates to APK viewer plugin)
 4. Close APK when finished to release resources.
 
