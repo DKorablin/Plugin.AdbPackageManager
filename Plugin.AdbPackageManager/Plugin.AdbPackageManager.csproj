@@ -26,14 +26,9 @@
 		<PackageTags>SAL;plugin;windows;ADB;Android;APK</PackageTags>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Include="..\WinForms.Shared\DbListView.cs" Link="UI\Controls\DbListView.cs" />
-	  <Compile Include="..\WinForms.Shared\SearchGrid\SearchGrid.cs" Link="UI\Controls\SearchGrid.cs" />
-	  <Compile Include="..\WinForms.Shared\SearchGrid\SearchGrid.Designer.cs" Link="UI\Controls\SearchGrid.Designer.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="..\WinForms.Shared\SearchGrid\SearchGrid.resx" Link="UI\SearchGrid.resx">
-			<LogicalName>AlphaOmega.Windows.Forms.SearchGrid.resources</LogicalName>
-		</EmbeddedResource>
+		<Compile Include="..\WinForms.Shared\DbListView.cs" Link="UI\Controls\DbListView.cs" />
+		<Compile Include="..\WinForms.Shared\SearchGrid\SearchGrid.cs" Link="UI\Controls\SearchGrid.cs" />
+		<Compile Include="..\WinForms.Shared\SearchGrid\SearchGrid.Designer.cs" Link="UI\Controls\SearchGrid.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,6 +66,24 @@
 		<Reference Include="System.Net.Http" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="UI\Controls\" />
+		<Folder Include="UI\Controls\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="..\WinForms.Shared\SearchGrid\SearchGrid.resx" Link="Controls\SearchGrid.resx">
+			<LogicalName>AlphaOmega.Windows.Forms.SearchGrid.resources</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>
