@@ -8,7 +8,7 @@
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageVersion>
 		<PackageVersion Include="SharpZipLib" Version="1.4.2"/>
-		<PackageVersion Include="System.Text.Encoding.CodePages" Version="4.7.0" Condition="'$(TargetFramework)' == 'net8.0-windows'" />
+		<PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.3" Condition="'$(TargetFramework)' == 'net8.0-windows'" />
 		
 		<PackageVersion Include="AlphaOmega.ApkReader" Version="2.0.10"/>
 
