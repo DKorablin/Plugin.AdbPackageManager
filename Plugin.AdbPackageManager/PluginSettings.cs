@@ -4,12 +4,15 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Windows.Forms.Design;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
 
 namespace Plugin.AdbPackageManager
 {
+	/// <summary>Persistent settings for the ADB Package Manager plugin</summary>
 	public class PluginSettings : INotifyPropertyChanged
 	{
 		private const String AdbPackageManagerTempPath = "Plugin.AdbPackageManager";
@@ -18,6 +21,7 @@ namespace Plugin.AdbPackageManager
 		{
 			public const String AndroidObbPath = "/sdcard/Android/obb/";
 			public const String AndroidPackageInfoUrl = "https://play.google.com/store/apps/details?id={0}";
+			public const String AdbDownloadUrl = "https://dl.google.com/android/repository/platform-tools-latest-windows.zip";
 		}
 
 		private String _adbPath;
@@ -29,6 +33,7 @@ namespace Plugin.AdbPackageManager
 		private Boolean _showHiddenPackages = false;
 		private String[] _hiddenPackages = new String[] { };
 
+		/// <summary>Path to the adb.exe executable</summary>
 		[Description("Path to adb.exe file")]
 		[Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
 		public String AdbPath
@@ -52,6 +57,7 @@ namespace Plugin.AdbPackageManager
 			}
 		}
 
+		/// <summary>URL template for viewing Android package details online</summary>
 		[DisplayName("APK info url")]
 		[Description("Uri where you can view Android Package details.\r\n{0} - required\r\nAbsolute Uri - required")]
 		public String AndroidPackageInfoUrl
@@ -70,6 +76,7 @@ namespace Plugin.AdbPackageManager
 			}
 		}
 
+		/// <summary>Device path for APK expansion files</summary>
 		[Category("Installation")]
 		[DisplayName("APK Expansion Files")]
 		[Description("Path for apk expansions files on Android device")]
@@ -86,6 +93,7 @@ namespace Plugin.AdbPackageManager
 			}
 		}
 
+		/// <summary>Install APK to SD card instead of internal storage</summary>
 		[Category("Installation")]
 		[DisplayName("Install to SD card")]
 		[Description("Install APK to SD card")]
@@ -96,6 +104,7 @@ namespace Plugin.AdbPackageManager
 			set => this.SetField(ref this._installToSdCard, value, nameof(this.InstallToSdCard));
 		}
 
+		/// <summary>Reinstall an existing app while keeping its data</summary>
 		[Category("Installation")]
 		[DisplayName("Reinstall existing")]
 		[Description("Reinstall an existing app, keeping its data")]
@@ -106,6 +115,7 @@ namespace Plugin.AdbPackageManager
 			set => this.SetField(ref this._reinstallExisting, value, nameof(this.ReinstallExisting));
 		}
 
+		/// <summary>Show system and hidden packages in the package list</summary>
 		[Category("UI")]
 		[DisplayName("Show Hidden")]
 		[Description("Show system and hidden files and packages")]
@@ -116,6 +126,7 @@ namespace Plugin.AdbPackageManager
 			set => this.SetField(ref this._showHiddenPackages, value, nameof(this.ShowHiddenPackages));
 		}
 
+		/// <summary>User-defined list of package names to hide from the package list</summary>
 		[Category("UI")]
 		[DisplayName("Hidden Packages")]
 		[Description("Custom list of hidden files and packages")]
@@ -139,6 +150,8 @@ namespace Plugin.AdbPackageManager
 			return Path.Combine(path, fileName);
 		}
 
+		/// <summary>Downloads the Android platform tools package and returns the path to adb.exe</summary>
+		/// <returns>Full path to the downloaded adb.exe</returns>
 		public String DownloadAdbClient()
 		{
 			String location = typeof(PluginSettings).Assembly.Location;
@@ -156,12 +169,23 @@ namespace Plugin.AdbPackageManager
 			} else
 				Directory.CreateDirectory(destination);
 
-			String zipPath = this.GetApkTempPath("platform-tools-latest-windows.zip");
-			using(WebClient client = new WebClient())
-				client.DownloadFile(new Uri("https://dl.google.com/android/repository/platform-tools-latest-windows.zip"), zipPath);
+			using(HttpClient client = new HttpClient())
+			{
+				using(HttpResponseMessage response = client.GetAsync(new Uri(Default.AdbDownloadUrl)).Result)
+				{
+					if(!response.IsSuccessStatusCode)
+						throw new InvalidOperationException($"Failed to download: {response.StatusCode}");
 
-			FastZip zip = new FastZip();
-			zip.ExtractZip(zipPath, destination, FastZip.Overwrite.Always, null, null, null, true);
+					using(System.IO.Stream contentStream = response.Content.ReadAsStreamAsync().Result)
+					{
+#if NETCOREAPP
+						Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+						FastZip zip = new FastZip();
+						zip.ExtractZip(contentStream, destination, FastZip.Overwrite.Always, null, null, null, true, true);
+					}
+				}
+			}
 
 			String[] foundFiles1 = Directory.GetFiles(destination, "adb.exe", SearchOption.AllDirectories);
 			if(foundFiles1.Length == 1)
@@ -193,6 +217,7 @@ namespace Plugin.AdbPackageManager
 		}
 
 		#region INotifyPropertyChanged
+		/// <summary>Raised when a property value changes</summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 		private Boolean SetField<T>(ref T field, T value, String propertyName)
 		{

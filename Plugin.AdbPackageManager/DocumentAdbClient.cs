@@ -15,6 +15,7 @@ using SAL.Windows;
 
 namespace Plugin.AdbPackageManager
 {
+	/// <summary>Main UI document that manages ADB device interaction and package operations</summary>
 	public partial class DocumentAdbClient : UserControl
 	{
 		private const String Caption = "ADB Client";
@@ -32,6 +33,7 @@ namespace Plugin.AdbPackageManager
 
 		private AdbDevice SelectedDevice => (AdbDevice)tsddlDevices.SelectedItem;
 
+		/// <summary>Initializes the control and sets up the default layout</summary>
 		public DocumentAdbClient()
 		{
 			this.InitializeComponent();
@@ -92,6 +94,10 @@ namespace Plugin.AdbPackageManager
 			this.RemoveSubPanelCtrl();
 		}
 
+		/// <summary>Shows the installation confirmation panel for the given package</summary>
+		/// <param name="packageName">Package name to confirm</param>
+		/// <param name="packagePath">Local path to the APK file</param>
+		/// <param name="resourceFiles">Associated resource files to include</param>
 		private void ShowConfirmCtrl(String packageName, String packagePath, String[] resourceFiles)
 		{
 			InstallConfirmCtrl ctrl = this.CreateSubPanelCtrl<InstallConfirmCtrl>(out Boolean isCtrlCreated);
@@ -101,6 +107,10 @@ namespace Plugin.AdbPackageManager
 			ctrl.ShowConfirm(packageName, packagePath, resourceFiles);
 		}
 
+		/// <summary>Creates or reuses a control of type T in the secondary split panel</summary>
+		/// <typeparam name="T">Type of control to create</typeparam>
+		/// <param name="ctrlCreated">True if a new control was created; false if an existing one was reused</param>
+		/// <returns>The control instance placed in the secondary panel</returns>
 		private T CreateSubPanelCtrl<T>(out Boolean ctrlCreated) where T : Control, new()
 		{
 			T result = null;
@@ -125,6 +135,8 @@ namespace Plugin.AdbPackageManager
 			return result;
 		}
 
+		/// <summary>Removes the secondary panel control if it matches type T</summary>
+		/// <typeparam name="T">Type of control to remove</typeparam>
 		private void RemoveSubPanelCtrl<T>() where T : Control
 		{
 			if(splitMain.Panel2.Controls.Count > 0
@@ -132,6 +144,7 @@ namespace Plugin.AdbPackageManager
 				this.RemoveSubPanelCtrl();
 		}
 
+		/// <summary>Disposes and removes all controls from the secondary split panel</summary>
 		private void RemoveSubPanelCtrl()
 		{
 			foreach(Control ctrl in splitMain.Panel2.Controls)
@@ -140,6 +153,10 @@ namespace Plugin.AdbPackageManager
 			splitMain.Panel2Collapsed = true;
 		}
 
+		/// <summary>Parses the APK file and returns an install item, or shows a confirmation dialog on warnings</summary>
+		/// <param name="filePath">Path to the APK file</param>
+		/// <param name="ignoreWarnings">True to skip confirmation dialogs</param>
+		/// <returns>Package install item, or null when the operation was cancelled</returns>
 		private WorkerInstallItem.PackageInstallItem ParsePackage(String filePath,Boolean ignoreWarnings=false)
 		{
 			String packageName = null;
@@ -217,7 +234,7 @@ namespace Plugin.AdbPackageManager
 					this.Plugin.Settings.AdbPath = this.Plugin.Settings.DownloadAdbClient();
 					return;
 				} catch(Exception exc)
-				{//TODO: exc.IsFatal
+				{
 					PluginWindows.Trace.TraceData(TraceEventType.Error, 6, exc);
 				}
 
@@ -429,6 +446,9 @@ namespace Plugin.AdbPackageManager
 			}
 		}
 
+		/// <summary>Starts a background worker with the given work item</summary>
+		/// <typeparam name="T">Type of worker item</typeparam>
+		/// <param name="worker">Worker item describing the operation to perform</param>
 		private void StartProcess<T>(T worker) where T : WorkerItem
 		{
 			if(bwProcess.IsBusy)

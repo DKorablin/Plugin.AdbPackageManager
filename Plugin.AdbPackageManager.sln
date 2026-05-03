@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34511.84
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11430.68 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A491966E-BB71-47EC-A8C7-610CB5735C51}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,6 +26,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{891B
 		.github\scripts\Build-ReleasePackage.ps1 = .github\scripts\Build-ReleasePackage.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{985AA2CE-E387-443E-82F8-0C551D4280E4}"
+	ProjectSection(SolutionItems) = preProject
+		.github\assets\UI-1-200.png = .github\assets\UI-1-200.png
+		.github\assets\UI-1.png = .github\assets\UI-1.png
+		.github\assets\UI-2-200.png = .github\assets\UI-2-200.png
+		.github\assets\UI-2.png = .github\assets\UI-2.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +51,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {A491966E-BB71-47EC-A8C7-610CB5735C51}
 		{891BDD28-19A5-49C2-98DD-3CB152521899} = {A491966E-BB71-47EC-A8C7-610CB5735C51}
+		{985AA2CE-E387-443E-82F8-0C551D4280E4} = {A491966E-BB71-47EC-A8C7-610CB5735C51}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2AE1E72E-FB36-4016-BDEA-8BFD08A033AC}
