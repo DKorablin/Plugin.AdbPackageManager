@@ -1,4 +1,4 @@
-# Android Debug Bridge Package Manager
+﻿# Android Debug Bridge Package Manager
 [![Auto build](https://github.com/DKorablin/Plugin.AdbPackageManager/actions/workflows/release.yml/badge.svg)](https://github.com/DKorablin/Plugin.AdbPackageManager/actions)
 
 [![UI Screenshot](.github/assets/UI-1-200.png)](.github/assets/UI-1.png)
