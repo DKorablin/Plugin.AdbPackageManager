@@ -7,13 +7,22 @@ using System.Text.RegularExpressions;
 
 namespace Plugin.AdbPackageManager.Adb
 {
+	/// <summary>Client for communicating with an Android device via the ADB protocol</summary>
 	public class AdbClient
 	{
+		/// <summary>Host address of the ADB server</summary>
 		public String AdbHost { get; private set; }
+		/// <summary>Port number of the ADB server</summary>
 		public Int32 AdbPort { get; private set; }
+		/// <summary>Serial number of the currently selected device</summary>
 		public String DeviceSerialNumber { get; private set; }
+		/// <summary>Path to the adb executable</summary>
 		public String AdbPath { get; private set; }
 
+		/// <summary>Initializes a new instance and starts the ADB server if not running</summary>
+		/// <param name="adbPath">Path to the adb executable</param>
+		/// <param name="adbHost">Host address of the ADB server</param>
+		/// <param name="adbPort">Port number of the ADB server</param>
 		public AdbClient(String adbPath, String adbHost = "127.0.0.1", Int32 adbPort = 5037)
 		{
 			if(String.IsNullOrEmpty(adbPath))
@@ -43,6 +52,8 @@ namespace Plugin.AdbPackageManager.Adb
 			PluginWindows.Trace.TraceEvent(TraceEventType.Verbose, 1, "ADB Server: {0}:{1} Version: {2:N0}", this.AdbHost, this.AdbPort, serverVersion);
 		}
 
+		/// <summary>Starts the ADB server process</summary>
+		/// <param name="adbPath">Path to the adb executable</param>
 		public void StartServer(String adbPath)
 		{
 			Process result = new Process()
@@ -60,12 +71,15 @@ namespace Plugin.AdbPackageManager.Adb
 			result.WaitForExit();
 		}
 
+		/// <summary>Stops the running ADB server</summary>
 		public void StopServer()
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
 				adbSocket.SendCommand("host:kill");
 		}
 
+		/// <summary>Returns the version number of the running ADB server</summary>
+		/// <returns>Server version number</returns>
 		public Int32 GetServerVersion()
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
@@ -75,6 +89,8 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
+		/// <summary>Returns the list of devices currently connected to the ADB server</summary>
+		/// <returns>Array of connected devices</returns>
 		public AdbDevice[] GetDevices()
 		{
 			String response = String.Empty;
@@ -125,11 +141,13 @@ namespace Plugin.AdbPackageManager.Adb
 			return devices.ToArray();
 		}
 
+		/// <summary>Sets the target device for subsequent commands</summary>
+		/// <param name="serialNumber">Serial number of the device to target</param>
 		public void SetDevice(String serialNumber)
 			=> this.DeviceSerialNumber = serialNumber;
 
 		/// <summary>Get information about the device</summary>
-		/// <returns></returns>
+		/// <returns>Dictionary of device property key-value pairs</returns>
 		public Dictionary<String, String> GetDeviceProperties()
 		{
 			Dictionary<String, String> props = new Dictionary<String, String>();
@@ -151,7 +169,7 @@ namespace Plugin.AdbPackageManager.Adb
 
 		/// <summary>Execute a command on a remote device</summary>
 		/// <param name="command">Command to execute</param>
-		/// <returns></returns>
+		/// <returns>Output lines from the command</returns>
 		public String[] ExecuteRemoteCommand(String command)
 		{
 			using(AdbSocket adbSocket = new AdbSocket(this.AdbHost,this.AdbPort))
@@ -214,6 +232,11 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
+		/// <summary>Reads file metadata from the socket and returns an AdbFileInfo instance</summary>
+		/// <param name="adbSocket">Open ADB socket to read from</param>
+		/// <param name="fullName">Full path when known; null to read the name from the socket</param>
+		/// <param name="directoryName">Parent directory used to build the full path when fullName is null</param>
+		/// <returns>File information, or null for the current/parent directory entries</returns>
 		private static AdbFileInfo GetFileInfo(AdbSocket adbSocket, String fullName, String directoryName)
 		{
 			Int32 mode = adbSocket.ReadInt32();
@@ -308,6 +331,12 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
+		/// <summary>Sends a sync command after switching the transport to the selected device</summary>
+		/// <param name="adbSocket">Open ADB socket to use</param>
+		/// <param name="command">Four-character sync command</param>
+		/// <param name="parameter">Command parameter value</param>
+		/// <param name="readResponse">Whether to read and return the response token</param>
+		/// <returns>Four-character response token, or null when readResponse is false</returns>
 		private String SendSyncCommand(AdbSocket adbSocket, String command, String parameter, Boolean readResponse = true)
 		{
 			_ = parameter ?? throw new ArgumentNullException(nameof(parameter));
@@ -331,6 +360,11 @@ namespace Plugin.AdbPackageManager.Adb
 		/// <param name="localFilePath">Local file path</param>
 		/// <param name="installOnSdCard">Install on external storage</param>
 		/// <param name="reinstallExisting">Reinstalling an existing package while preserving data</param>
+		/// <summary>Install an application on the device using legacy sync transfer</summary>
+		/// <param name="localFilePath">Local path to the APK file</param>
+		/// <param name="tempFolderPath">Temporary folder path on the device for staging the file</param>
+		/// <param name="installOnSdCard">Install the application on external storage</param>
+		/// <param name="reinstallExisting">Reinstall an existing package while preserving its data</param>
 		public void InstallApplication(String localFilePath, String tempFolderPath, Boolean installOnSdCard, Boolean reinstallExisting)
 		{
 			// legacy install
@@ -351,6 +385,9 @@ namespace Plugin.AdbPackageManager.Adb
 			this.ExecutePm(String.Format("install {0} {1}", String.Join(" ", options), remoteFileName));
 		}
 
+		/// <summary>Upload a file to the device using the ADB push command</summary>
+		/// <param name="localPath">Local path to the file to upload</param>
+		/// <param name="remotePath">Remote destination path on the device</param>
 		public void UploadFile2(String localPath, String remotePath)
 		{
 			if(!File.Exists(localPath))
@@ -448,6 +485,8 @@ namespace Plugin.AdbPackageManager.Adb
 			}
 		}
 
+		/// <summary>Executes a package manager command and validates the response</summary>
+		/// <param name="commandLine">Package manager command line arguments</param>
 		private void ExecutePm(String commandLine)
 		{
 			String[] response = this.ExecuteRemoteCommand(String.Format("pm {0}", commandLine));
@@ -463,9 +502,13 @@ namespace Plugin.AdbPackageManager.Adb
 			throw new InvalidOperationException(2 == match.Groups.Count ? match.Groups[1].Value : line);
 		}
 
+		/// <summary>Switches the ADB socket transport to the selected device</summary>
+		/// <param name="adbSocket">Socket to set the transport on</param>
 		private void SetDevice(AdbSocket adbSocket)
 			=> adbSocket.SendCommand(String.Format("host:transport:{0}", this.DeviceSerialNumber));
 
+		/// <summary>Creates a new ADB socket connected to the configured host and port</summary>
+		/// <returns>New connected ADB socket</returns>
 		private AdbSocket GetSocket()
 			=> new AdbSocket(this.AdbHost, this.AdbPort);
 	}
