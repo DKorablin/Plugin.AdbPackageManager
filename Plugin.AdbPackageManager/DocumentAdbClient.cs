@@ -22,7 +22,7 @@ namespace Plugin.AdbPackageManager
 		private static readonly Color HiddenPackageColor = Color.Gray;
 		private AdbClient _client;
 		private ApkImageViewPlugin _apkViewPlugin;
-		private PluginWindows Plugin => (PluginWindows)this.Window.Plugin;
+		private PluginWindows Plugin => (PluginWindows)this.Window.Plugin.Instance;
 
 		private IWindow Window => (IWindow)base.Parent;
 		private ApkImageViewPlugin ApkViewPlugin
